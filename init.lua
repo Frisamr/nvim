@@ -944,9 +944,26 @@ require('lazy').setup({
     main = 'nvim-treesitter.configs', -- Sets main module to use for opts
     -- [[ Configure Treesitter ]] See `:help nvim-treesitter`
     opts = {
-      ensure_installed = { 'bash', 'c', 'diff', 'html', 'lua', 'luadoc', 'markdown', 'markdown_inline', 'query', 'vim', 'vimdoc' },
-      -- Autoinstall languages that are not installed
-      auto_install = true,
+      ensure_installed = {
+        'diff',
+        'lua',
+        'luadoc',
+        'markdown',
+        'markdown_inline',
+        'query',
+        'vim',
+        'vimdoc',
+        'c',
+        'cpp',
+        'rust',
+        'zig',
+        'html',
+        'css'
+      },
+      -- PNOTE: autoinstall is just annoying as it needs to download the
+      -- parser and spin up a C compiler every time. By the time it completes,
+      -- I'm usually done editing the file anyway.
+      auto_install = false,
       highlight = {
         enable = true,
         -- Some languages depend on vim's regex highlighting system (such as Ruby) for indent rules.

@@ -263,31 +263,15 @@ require('lazy').setup({
         -- `build` is used to run some command when the plugin is installed/updated.
         -- This is only run then, not every time Neovim starts up.
         --
-        -- NOTE: this should apply the `telescope_fzf_toolchain.cmake` in the config directory,
-        -- which should force cmake to use zig as the toolchain
-        --
-        -- this failed with the following error:
-        -- Building for: Visual Studio 17 2022
-        -- CMake Error at CMakeLists.txt:1 (cmake_minimum_required):
-        --   Compatibility with CMake < 3.5 has been removed from CMake.
-        --
-        --   Update the VERSION argument <min> value.  Or, use the <min>...<max> syntax
-        --   to tell CMake that the project requires at least <min> but has been updated
-        --   to work with policies introduced by <max> or earlier.
-        --
-        --   Or, add -DCMAKE_POLICY_VERSION_MINIMUM=3.5 to try configuring anyway.
-        --
-        -- Configuring incomplete, errors occurred!
-        --
-        -- not sure how to fix this, I'll try applying the `-DCMAKE_POLICY_VERSION_MINIMUM=3.5`
-        build = '$env:CC="zig cc" cmake --toolchain '
-          .. vim.fn.stdpath 'config'
-          .. '\\telescope_fzf_toolchain.cmake -S. -DCMAKE_POLICY_VERSION_MINIMUM=3.5 -Bbuild -DCMAKE_BUILD_TYPE=Release && cmake --build build --config Release && cmake --install build --prefix build',
+        -- NOTE: trying to work around cmake conflicts was a headache,
+        -- so I'm using zig directly as per this comment on the repo:
+        -- https://github.com/nvim-telescope/telescope-fzf-native.nvim/issues/122#issuecomment-2562474222
+        build = 'mkdir build; zig cc -O3 -Wall -Werror -fpic -std=gnu99 -shared src/fzf.c -o build/libfzf.dll',
 
         -- `cond` is a condition used to determine whether this plugin should be
         -- installed and loaded.
         cond = function()
-          return vim.fn.executable 'cmake' == 1
+          return vim.fn.executable 'zig' == 1
         end,
       },
       { 'nvim-telescope/telescope-ui-select.nvim' },

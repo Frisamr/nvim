@@ -60,16 +60,6 @@ vim.o.timeoutlen = 300
 vim.o.splitright = true
 vim.o.splitbelow = true
 
--- Sets how neovim will display certain whitespace characters in the editor.
---
---  Notice listchars is set using `vim.opt` instead of `vim.o`.
---  It is very similar to `vim.o` but offers an interface for conveniently interacting with tables.
---   See `:help lua-options`
---   and `:help lua-options-guide`
---  TODO: automatically set `leadmultispace` based on the indentation width set for the file
-vim.o.list = true
-vim.opt.listchars = { tab = '» ', leadmultispace = '› ', trail = '·', nbsp = '␣' }
-
 -- Preview substitutions live, as you type!
 vim.o.inccommand = 'split'
 
@@ -126,6 +116,44 @@ vim.api.nvim_create_autocmd('TextYankPost', {
   group = vim.api.nvim_create_augroup('kickstart-highlight-yank', { clear = true }),
   callback = function()
     vim.hl.on_yank()
+  end,
+})
+
+-- Sets the `list` and `listchars` options, which control how neovim will
+-- display certain whitespace characters in the editor.
+-- These options are set local to the current buffer.
+--
+-- Running during `BufWinEnter` means this autocommand runs after modelines have
+--  been processed (and thus after the modeline have have set `tabstop`).
+--  See `:h BufWinEnter`
+--
+--  Use `:do[autocmd] BufWinEnter` to rerun this if you change ts while editing
+--  a file for some reason.
+vim.api.nvim_create_autocmd('BufWinEnter', {
+  desc = 'Set listchars depending on tabstop',
+  group = vim.api.nvim_create_augroup('custom-modeline-opts', { clear = true }),
+  callback = function()
+    -- Only run this setup on normal buffers
+    if vim.bo.buftype ~= '' then
+      return
+    end
+
+    vim.wo.list = true
+
+    local buflocal_lms = ' '
+    if vim.bo.expandtab then
+      -- Show a single '›' char for each indent level when using spaces for indent
+      buflocal_lms = '›' .. string.rep(' ', vim.bo.tabstop - 1)
+    else
+      -- Otherwise show every leading space (for visual indent and such)
+      buflocal_lms = '·'
+    end
+
+    -- Notice listchars is set using `vim.opt` instead of `vim.o`.
+    -- It is very similar to `vim.o` but offers an interface for conveniently interacting with tables.
+    --  See `:help lua-options`
+    --  and `:help lua-options-guide`
+    vim.opt_local.listchars = { tab = '» ', leadmultispace = buflocal_lms, trail = '·', nbsp = '␣' }
   end,
 })
 

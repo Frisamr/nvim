@@ -60,6 +60,15 @@ vim.o.timeoutlen = 300
 vim.o.splitright = true
 vim.o.splitbelow = true
 
+-- Sets how neovim will display certain whitespace characters in the editor.
+--  See `:help 'list'` and `:help 'listchars'`
+--
+-- Notice listchars is set using `vim.opt` instead of `vim.o`.
+-- It is very similar to `vim.o` but offers an interface for conveniently interacting with tables.
+--  See `:help lua-options` and `:help lua-options-guide`
+vim.wo.list = true
+vim.opt_local.listchars = { tab = '» ', leadmultispace = ' ', trail = '·', nbsp = '␣' }
+
 -- Preview substitutions live, as you type!
 vim.o.inccommand = 'split'
 
@@ -119,44 +128,6 @@ vim.api.nvim_create_autocmd('TextYankPost', {
   end,
 })
 
--- Sets the `list` and `listchars` options, which control how neovim will
--- display certain whitespace characters in the editor.
--- These options are set local to the current buffer.
---
--- Running during `BufWinEnter` means this autocommand runs after modelines have
---  been processed (and thus after the modeline have have set `tabstop`).
---  See `:h BufWinEnter`
---
---  Use `:do[autocmd] BufWinEnter` to rerun this if you change ts while editing
---  a file for some reason.
-vim.api.nvim_create_autocmd('BufWinEnter', {
-  desc = 'Set listchars depending on tabstop',
-  group = vim.api.nvim_create_augroup('custom-modeline-opts', { clear = true }),
-  callback = function()
-    -- Only run this setup on normal buffers
-    if vim.bo.buftype ~= '' then
-      return
-    end
-
-    vim.wo.list = true
-
-    local buflocal_lms = ' '
-    if vim.bo.expandtab then
-      -- Show a single '›' char for each indent level when using spaces for indent
-      buflocal_lms = '›' .. string.rep(' ', vim.bo.tabstop - 1)
-    else
-      -- Otherwise show every leading space (for visual indent and such)
-      buflocal_lms = '·'
-    end
-
-    -- Notice listchars is set using `vim.opt` instead of `vim.o`.
-    -- It is very similar to `vim.o` but offers an interface for conveniently interacting with tables.
-    --  See `:help lua-options`
-    --  and `:help lua-options-guide`
-    vim.opt_local.listchars = { tab = '» ', leadmultispace = buflocal_lms, trail = '·', nbsp = '␣' }
-  end,
-})
-
 -- [[ Install `lazy.nvim` plugin manager ]]
 --    See `:help lazy.nvim.txt` or https://github.com/folke/lazy.nvim for more info
 local lazypath = vim.fn.stdpath 'data' .. '/lazy/lazy.nvim'
@@ -204,6 +175,14 @@ require('lazy').setup({
         changedelete = { text = '~' },
       },
     },
+  },
+
+  { -- Adds indentation guides
+    'lukas-reineke/indent-blankline.nvim',
+    main = 'ibl',
+    ---@module "ibl"
+    ---@type ibl.config
+    opts = {},
   },
 
   -- NOTE: Plugins can also be configured to run Lua code when they are loaded.

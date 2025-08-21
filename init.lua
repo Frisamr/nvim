@@ -134,9 +134,11 @@ vim.api.nvim_create_autocmd('TextYankPost', {
 --  during `BufReadPost`) has run and modelines have been processed.
 --  See `:h BufWinEnter`
 vim.api.nvim_create_autocmd('BufWinEnter', {
-  desc = 'Set listchars depending on tabstop',
+  desc = 'Set listchars depending on buffer options',
   group = vim.api.nvim_create_augroup('custom-modeline-opts', { clear = true }),
   callback = function()
+    -- TODO: factor this fn out and an a user command to show ALL spaces
+
     -- Only change settings for normal buffers
     --
     -- TODO: filter out unwanted buftypes and filetypes properly.

@@ -66,8 +66,8 @@ vim.o.splitbelow = true
 -- Notice listchars is set using `vim.opt` instead of `vim.o`.
 -- It is very similar to `vim.o` but offers an interface for conveniently interacting with tables.
 --  See `:help lua-options` and `:help lua-options-guide`
-vim.wo.list = true
-vim.opt_local.listchars = { tab = '» ', leadmultispace = ' ', trail = '·', nbsp = '␣' }
+vim.o.list = true
+vim.opt.listchars = { tab = '» ', trail = '·', nbsp = '␣' }
 
 -- Preview substitutions live, as you type!
 vim.o.inccommand = 'split'
@@ -125,6 +125,31 @@ vim.api.nvim_create_autocmd('TextYankPost', {
   group = vim.api.nvim_create_augroup('kickstart-highlight-yank', { clear = true }),
   callback = function()
     vim.hl.on_yank()
+  end,
+})
+
+-- Automatically update `'listchars'` based on indent options of the buffer
+--
+-- This autocmd is run during `BufWinEnter` to ensure guess-indent (which runs
+--  during `BufReadPost`) has run and modelines have been processed.
+--  See `:h BufWinEnter`
+vim.api.nvim_create_autocmd('BufWinEnter', {
+  desc = 'Set listchars depending on tabstop',
+  group = vim.api.nvim_create_augroup('custom-modeline-opts', { clear = true }),
+  callback = function()
+    -- Only change settings for normal buffers
+    --
+    -- TODO: filter out unwanted buftypes and filetypes properly.
+    --  See: `set_from_buffer` function in `init.lua` of guess-indent
+    if vim.bo.buftype ~= '' then
+      return
+    end
+
+    if not vim.bo.expandtab then
+      -- Using tab indent, so show leading spaces
+      vim.opt_local.listchars:remove { 'leadmultispace' }
+      vim.opt_local.listchars:prepend { leadmultispace = '·' }
+    end
   end,
 })
 

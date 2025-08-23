@@ -147,7 +147,11 @@ vim.api.nvim_create_autocmd('BufWinEnter', {
       return
     end
 
-    if not vim.bo.expandtab then
+    if vim.bo.expandtab then
+      -- Using tab indent, so hide leading spaces to reduce noise
+      vim.opt_local.listchars:remove { 'leadmultispace' }
+      vim.opt_local.listchars:prepend { leadmultispace = ' ' }
+    else
       -- Using tab indent, so show leading spaces
       vim.opt_local.listchars:remove { 'leadmultispace' }
       vim.opt_local.listchars:prepend { leadmultispace = '·' }

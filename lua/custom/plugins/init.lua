@@ -6,6 +6,7 @@
 ---@module 'lazy'
 ---@type LazySpec
 return {
+  require 'custom.plugins.telescope',
   require 'custom.plugins.gruvbox',
 }
 

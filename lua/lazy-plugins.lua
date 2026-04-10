@@ -12,7 +12,10 @@ require('lazy').setup({
 
   require 'kickstart.plugins.which-key',
 
-  require 'kickstart.plugins.telescope',
+  -- NOTE: Since I have customized my Telescope config, I have moved it from the
+  -- 'kickstart' section to the 'custom' section
+  --
+  -- require 'kickstart.plugins.telescope',
 
   require 'kickstart.plugins.lspconfig',
 

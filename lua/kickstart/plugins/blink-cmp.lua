@@ -39,9 +39,6 @@ return {
         --   <c-y> to accept ([y]es) the completion.
         --    This will auto-import if your LSP supports it.
         --    This will expand snippets if the LSP sent a snippet.
-        -- 'super-tab' for tab to accept
-        -- 'enter' for enter to accept
-        -- 'none' for no mappings
         --
         -- For an understanding of why the 'default' preset is recommended,
         -- you will need to read `:help ins-completion`
@@ -80,18 +77,20 @@ return {
 
       snippets = { preset = 'luasnip' },
 
-      -- Blink.cmp includes an optional, recommended rust fuzzy matcher,
-      -- which automatically downloads a prebuilt binary when enabled.
-      --
-      -- By default, we use the Lua implementation instead, but you may enable
-      -- the rust implementation via `'prefer_rust_with_warning'`
+      -- Enable the Rust-based fuzzy matcher, but disable automatic download of prebuilt binares.
+      -- I prefer to build from source instead.
       --
       -- See :h blink-cmp-config-fuzzy for more information
-      fuzzy = { implementation = 'lua' },
+      --
+      -- NOTE: I have currently set `ignore_version_mismatch` to true, which matches the default config.
+      -- However, the docs indicate this may need to be set to false when building locally.
+      fuzzy = { implementation = 'prefer_rust_with_warning', prebuilt_binaries = { download = false, ignore_version_mismatch = false } },
 
       -- Shows a signature help window while you type arguments for a function
       signature = { enabled = true },
     },
+    -- build the rust fuzzy matcher
+    build = 'cargo build --release',
   },
 }
 -- vim: ts=2 sts=2 sw=2 et

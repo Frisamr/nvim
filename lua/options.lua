@@ -43,6 +43,31 @@ vim.o.splitbelow = true
 vim.o.list = true
 vim.opt.listchars = { tab = '» ', trail = '·', nbsp = '␣' }
 
+-- Automatically set 'listchars' to show leading spaces in buffers where tab indent is being used.
+--
+-- This autocmd is run during `BufWinEnter` to ensure guess-indent (which runs
+--  during `BufReadPost`) has run and modelines have been processed.
+--  See `:h BufWinEnter`
+vim.api.nvim_create_autocmd('BufWinEnter', {
+  desc = 'Use listchars to show leading spaces when using tab indent',
+  group = vim.api.nvim_create_augroup('custom-modeline-opts', { clear = false }),
+  callback = function()
+    -- Only change settings for normal buffers
+    -- TODO: filter out unwanted buftypes and filetypes properly.
+    --  See: `set_from_buffer` function in `init.lua` of guess-indent
+    if vim.bo.buftype ~= '' then return end
+
+    if not vim.bo.expandtab then
+      -- Using tab indent, so show leading spaces in this local window
+      vim.opt_local.listchars:append { leadmultispace = '·' }
+    else
+      -- in some weird cases, the windowid does not change when the buffer changes,
+      -- so we need to explicitly clear 'leadmultispace' when tab indent isn't being used
+      vim.opt_local.listchars:remove { 'leadmultispace' }
+    end
+  end,
+})
+
 -- Preview substitutions live, as you type!
 vim.o.inccommand = 'split'
 

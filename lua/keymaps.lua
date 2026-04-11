@@ -1,8 +1,8 @@
 -- [[ Basic Keymaps ]]
 
-vim.keymap.set('n', '<Esc>', vim.cmd.nohls(), { noremap = true })
+vim.keymap.set('n', '<Esc>', vim.cmd.nohls)
 
-vim.keymap.set('t', 'CTRL-[', '<C-\\><C-n>', { desc = 'Exit terminal mode', noremap = true })
+vim.keymap.set('t', 'CTRL-[', '<C-\\><C-n>', { desc = 'Exit terminal mode' })
 
 -- Diagnostic Config & Keymaps
 -- See :help vim.diagnostic.Opts

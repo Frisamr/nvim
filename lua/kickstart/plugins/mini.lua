@@ -13,8 +13,10 @@ return {
       require('mini.ai').setup {
         -- NOTE: Avoid conflicts with the built-in incremental selection mappings on Neovim>=0.12 (see `:help treesitter-incremental-selection`)
         mappings = {
-          around_next = 'aa',
-          inside_next = 'ii',
+          around_next = 'aN',
+          inside_next = 'iN',
+          around_last = 'aL',
+          inside_last = 'iL',
         },
         n_lines = 500,
       }

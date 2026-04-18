@@ -8,6 +8,7 @@
 return {
   require 'custom.plugins.telescope',
   require 'custom.plugins.gruvbox',
+  require 'custom.plugins.leap',
 }
 
 -- vim: ts=2 sts=2 sw=2 et
